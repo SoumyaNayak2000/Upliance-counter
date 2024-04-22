@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box,
   Center,
@@ -6,13 +6,16 @@ import {
   Heading,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useSpring, animated, SpringValue, to } from "react-spring";
+import { useSpring, animated } from "react-spring";
 import Counter from "./Counter";
 import UserDataForm from "./UserData";
 import RichTextEditor from "./RichTextEditor";
 import DashBoard from "./DashBoard";
 import { UserContext } from "../App";
-import { useContext } from "react";
+
+type HeightType = {
+  height: any;
+};
 
 const Home: React.FC = () => {
   const [count, setCount] = useState<number>(0);
@@ -22,16 +25,16 @@ const Home: React.FC = () => {
 
   const { height } = useSpring({
     from: { height: "0%" },
-    to: { height: `${count * 1}%` },
+    to: { height: `${count * 5}%` },
   });
 
   const increment = () => {
-    setCount(count + 1);
+    setCount((prevCount) => prevCount + 1);
   };
 
   const decrement = () => {
     if (count > 0) {
-      setCount(count - 1);
+      setCount((prevCount) => prevCount - 1);
     }
   };
 
@@ -93,7 +96,7 @@ const Home: React.FC = () => {
   );
 };
 
-const AnimatedBar: React.FC<{ height: SpringValue<number> }> = ({ height }) => {
+const AnimatedBar: React.FC<HeightType> = ({ height }) => {
   const animatedBarStyle: React.CSSProperties = {
     position: "absolute",
     bottom: 0,

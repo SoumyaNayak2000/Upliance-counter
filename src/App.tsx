@@ -1,12 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Footer from "./components/Footer";
 import { createContext, useEffect, useState } from "react";
-import { ProtectedRoute } from "protected-route-react";
 import toast, { Toaster } from "react-hot-toast";
 
 interface UserData {
@@ -15,7 +13,7 @@ interface UserData {
   email: string;
   phone: string;
   address: string;
-  given_name?: string; // Make it optional if needed
+  given_name?: string;
 }
 
 interface UserContextType {
@@ -35,6 +33,7 @@ const defaultValue: UserContextType = {
 };
 
 export const UserContext = createContext<UserContextType>(defaultValue);
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
@@ -54,14 +53,6 @@ function App() {
       setIsAuthenticated(true);
     }
   }, []);
-  useEffect(() => {
-    const userDataString = sessionStorage.getItem("userData");
-    if (userDataString) {
-      const userData = JSON.parse(userDataString);
-      setUser(userData);
-      setIsAuthenticated(true);
-    }
-  }, [isAuthenticated]);
 
   return (
     <Router>
@@ -76,32 +67,13 @@ function App() {
       >
         <Header />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute
-                isAuthenticated={!isAuthenticated}
-                redirect="/home"
-              >
-                <Signup />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <ProtectedRoute
-                isAuthenticated={!isAuthenticated}
-                redirect="/home"
-              >
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+          <Route path="/" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          {isAuthenticated ? (
             <Route path="/home" element={<Home />} />
-          </Route>
+          ) : (
+            <Route path="/login" element={<Login />} />
+          )}
         </Routes>
         <Footer />
         <Toaster />
