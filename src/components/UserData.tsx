@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -17,6 +17,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { nanoid } from "@reduxjs/toolkit";
+import { UserContext } from "../App";
 
 interface UserData {
   id: string;
@@ -27,6 +28,7 @@ interface UserData {
 }
 
 const UserDataForm: React.FC = () => {
+  const { setFormData } = useContext(UserContext);
   const bg = useColorModeValue("teal.100", "teal.800");
   const borderColor = useColorModeValue("teal.300", "teal.600");
   const [userData, setUserData] = useState<UserData>({
@@ -65,6 +67,7 @@ const UserDataForm: React.FC = () => {
 
   const handleSubmit = () => {
     // Save data to local storage
+    setFormData(userData);
     const savedData = JSON.parse(localStorage.getItem("userData") || "[]");
     localStorage.setItem("userData", JSON.stringify([...savedData, userData]));
 

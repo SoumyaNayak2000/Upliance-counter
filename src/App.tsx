@@ -15,13 +15,23 @@ interface UserData {
   address: string;
   given_name?: string;
 }
+interface FormData {
+  id: string;
+  name: string;
+  address: string;
+  email: string;
+  phone: string;
+}
 
 interface UserContextType {
   user: UserData | null;
   setUser: React.Dispatch<React.SetStateAction<UserData | null>>;
+  setFormData: React.Dispatch<React.SetStateAction<FormData | null>>;
   logoutHandler: () => void;
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
+
+  formData: FormData | null;
 }
 
 const defaultValue: UserContextType = {
@@ -30,6 +40,8 @@ const defaultValue: UserContextType = {
   logoutHandler: () => {},
   isAuthenticated: false,
   setIsAuthenticated: () => {},
+  setFormData: () => {},
+  formData: null,
 };
 
 export const UserContext = createContext<UserContextType>(defaultValue);
@@ -37,6 +49,14 @@ export const UserContext = createContext<UserContextType>(defaultValue);
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
+  const [formData, setFormData] = useState<FormData | null>(null);
+
+  useEffect(() => {
+    const updateFormData = (data: FormData | null) => {
+      setFormData(data);
+    };
+    updateFormData(formData);
+  }, [formData]);
 
   const logoutHandler = () => {
     sessionStorage.removeItem("userData");
@@ -63,6 +83,8 @@ function App() {
           logoutHandler,
           isAuthenticated,
           setIsAuthenticated,
+          setFormData,
+          formData,
         }}
       >
         <Header />

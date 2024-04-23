@@ -11,21 +11,24 @@ import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Underline from "@tiptap/extension-underline";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../App";
 
 const extensions = [StarterKit, Document, Paragraph, Text, Underline];
 
 const RichTextEditor = () => {
+  const { formData } = useContext(UserContext);
   const [contentSaved, setContentSaved] = useState(false);
+
   const editor = useEditor({
     extensions,
-    content: loadContentFromStorage(),
+    content: (formData && JSON.stringify(formData)) || "<p>Hello World !</p>",
   });
-
-  function loadContentFromStorage() {
-    const storedContent = localStorage.getItem("richTextContent");
-    return storedContent ? JSON.parse(storedContent) : "";
-  }
+  useEffect(() => {
+    if (editor && formData) {
+      editor.commands.setContent(JSON.stringify(formData));
+    }
+  }, [formData, editor]);
 
   const handleSaveContent = () => {
     if (editor) {
